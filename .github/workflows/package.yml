@@ -83,21 +83,18 @@ jobs:
       - name: Build package
         run: wails build -clean
 
-      - name: Prepare artifact path (Windows)
+      - name: Upload package artifact (Windows)
         if: runner.os == 'Windows'
-        shell: pwsh
-        run: |
-          "$env:ARTIFACT_PATH=build/bin/*.exe" >> $env:GITHUB_ENV
-
-      - name: Prepare artifact path (Linux/macOS)
-        if: runner.os != 'Windows'
-        shell: bash
-        run: |
-          echo "ARTIFACT_PATH=build/bin/*" >> "$GITHUB_ENV"
-
-      - name: Upload package artifact
         uses: actions/upload-artifact@v4
         with:
           name: TwitterXMediaBatchDownloader-${{ runner.os }}
-          path: ${{ env.ARTIFACT_PATH }}
+          path: build/bin/*.exe
+          if-no-files-found: error
+
+      - name: Upload package artifact (Linux/macOS)
+        if: runner.os != 'Windows'
+        uses: actions/upload-artifact@v4
+        with:
+          name: TwitterXMediaBatchDownloader-${{ runner.os }}
+          path: build/bin/*
           if-no-files-found: error
